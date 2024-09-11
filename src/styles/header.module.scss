@@ -1,0 +1,37 @@
+@use '@porsche-design-system/components-react/styles' as *;
+
+.container {
+    height: 100vh;
+    background-color: black;
+}
+
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This ensures the video covers the entire background */
+    z-index: 0; /* Ensures it's behind the content */
+}
+
+.content{
+    position: relative;
+    z-index: 1;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.heading {
+    @include pds-heading-xx-large;
+    color: white; 
+}
+
+.svg {
+    margin-top: -3rem;
+    z-index: 2;
+}
+

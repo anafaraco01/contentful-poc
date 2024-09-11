@@ -1,0 +1,17 @@
+@use '@porsche-design-system/components-react/styles' as *;
+
+.container {
+    padding-left: $pds-spacing-fluid-xx-large;
+    padding-right: $pds-spacing-fluid-xx-large;
+    padding-bottom: $pds-spacing-fluid-large;
+    background-color: black;
+    color: white;
+}
+
+.whiteBackground {
+    padding-left: $pds-spacing-fluid-xx-large;
+    padding-right: $pds-spacing-fluid-xx-large;
+    padding-bottom: $pds-spacing-fluid-large;
+    background-color: white;
+    color: black;
+}

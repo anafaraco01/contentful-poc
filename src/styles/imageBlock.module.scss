@@ -1,0 +1,8 @@
+@use '@porsche-design-system/components-react/styles' as *;
+
+.container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,83 +1,93 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { client, previewClient } from "@/lib/contentful";
+import ContentBlock from "@/components/ContentBlock";
+import Header from "@/components/Header";
+import ImageBlock from "@/components/ImageBlock";
+import TwoColumnsBlock from "@/components/TwoColumnsBlock";
+import Button from "@/components/Button";
+import SimpleRichText from "@/components/SimpleRichText";
 
-const Recipe = ({ recipe, preview }) => {
-  const router = useRouter();
-  const { lightHeading, boldHeading, paragraph1, paragraph2, richText, slug } = recipe.fields;
+export default function Page({ page, preview }) {
+    const sections = page.fields.sections;
 
-  return (
-    <>
-      <article>
-        {preview && (
-          <>
-            You are previewing content:
-            <Link href="/api/exit-preview">Exit preview</Link>
-          </>
-        )}
-        {router.isFallback ? (
-          <>loading..</>
-        ) : (
-      
-            // <ContentfulImage
-            //   className={styles.bannerImage}
-            //   alt={title}
-            //   src={banner.fields.file.url}
-            //   width={banner.fields.file.details.image.width}
-            //   height={banner.fields.file.details.image.height}
-            // />
-            
-            <>
-            <Link href={`/${slug}`} aria-label={lightHeading}>
-            <div>{boldHeading}</div>
-            <div>{paragraph1}</div>
-            <div>{paragraph2}</div>
-            </Link>
-            </>
-    
-        )}
-      </article>
-    </>
-  );
+    return (
+        <>
+            {sections.map((section, sectionIdx) => {
+                const contentType = section.sys.contentType.sys.id;
+
+                if (contentType === "header") {
+                    return <Header key={section.sys.id} content={section} />;
+                }
+
+                if (contentType === "contentBlock") {
+                    return <ContentBlock key={section.sys.id} content={section} />;
+                }
+
+                if (contentType === "imageBlock") {
+                    return <ImageBlock key={section.sys.id} content={section} />;
+                }
+
+                if (contentType === "twoColumnsBlock") {
+                    return <TwoColumnsBlock key={section.sys.id} content={section} />;
+                }
+
+                if (contentType === "button") {
+                    return <Button key={section.sys.id} content={section} />;
+                }
+
+                if (contentType === "simpleRichText") {
+                    return <SimpleRichText key={section.sys.id} content={section} />;
+                }
+
+                return null;
+            })}
+        </>
+    );
 };
 
 export const getStaticProps = async ({ params, preview = false }) => {
-  const currentClient = preview ? previewClient : client
 
-  const { slug } = params;
-  const response = await currentClient.getEntries({
-    content_type: "contentBlock",
-    "fields.slug": slug,
-  });
+    const currentClient = preview ? previewClient : client
 
-  if (!response?.items?.length) {
+    const { slug } = params;
+    
+    const response = await currentClient.getEntries({
+        content_type: "page",
+        "fields.slug": slug,
+    });
+
+    if (!response?.items?.length) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false,
+            },
+        };
+    }
+
     return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
+        props: {
+            page: response?.items?.[0],
+            revalidate: 60,
+            preview,
+        },
     };
-  }
-
-  return {
-    props: {
-      recipe: response?.items?.[0],
-      revalidate: 60,
-      preview,
-    },
-  };
 };
 
 export const getStaticPaths = async () => {
-  const response = await client.getEntries({ content_type: "contentBlock" });
-  const paths = response.items.map((item) => ({
-    params: { slug: item.fields.slug },
-  }));
+    const response = await client.getEntries({
+        content_type: "page"
+    });
 
-  return {
-    paths,
-    fallback: true,
-  };
+    const paths = response.items.map((item) => {
+        return {
+            params: { slug: item.fields.slug },
+        }
+    });
+
+    return {
+        paths,
+        fallback: false,
+    };
 };
-
-export default Recipe;

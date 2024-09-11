@@ -1,0 +1,23 @@
+@use '@porsche-design-system/components-react/styles' as *;
+
+.subContainer {
+    margin-left: $pds-spacing-fluid-xx-large;
+    margin-right: $pds-spacing-fluid-xx-large;
+    display: flex;
+}
+
+.columnOne {
+    width: 45%;
+}
+
+.columnTwo {
+    width: 55%;
+}
+
+.reverse {
+    flex-direction: row-reverse;
+}
+
+.button {
+    padding-top: $pds-spacing-fluid-medium;
+}
